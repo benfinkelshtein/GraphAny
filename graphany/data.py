@@ -413,6 +413,21 @@ class GraphDataset(pl.LightningDataModule):
         if self.cfg.to_bidirected:
             g = dgl.to_bidirected(g)
         g = dgl.to_simple(g)  # Remove duplicate edges.
+
+        ############################# NOTE: the sole change I implemented #############################
+        if self.name in ['FCora', 'DBLP', 'BlogCatalog', 'CoCS', 'CoPhysics']:
+            n_components = 1024
+        elif self.name in ['Reddit']:
+            n_components = 32
+        else:
+            n_components = None
+        if n_components is not None:
+            feat = feat - feat.min()
+            feat.div_(feat.sum(dim=-1, keepdim=True).clamp_(min=1.))
+            pca = PCA(n_components=n_components)
+            feat = torch.from_numpy(pca.fit_transform(feat.numpy()))
+        ############################# NOTE: the sole change I implemented #############################
+
         return g, label, feat, train_mask, val_mask, test_mask, num_class
 
     def compute_linear_gnn_logits(
