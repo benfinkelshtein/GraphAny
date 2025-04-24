@@ -416,16 +416,20 @@ class GraphDataset(pl.LightningDataModule):
         g = dgl.to_simple(g)  # Remove duplicate edges.
 
         ############################# NOTE: the sole change I implemented #############################
-        if self.name in ['FCora', 'DBLP', 'BlogCatalog', 'CoCS', 'CoPhysics']:
+        if self.name in ['FCora', 'CoCS']:
+            n_components = 2048
+        elif self.name in ['CoPhysics']:
             n_components = 1024
-        elif self.name in ['Reddit']:
-            n_components = 32
         else:
             n_components = None
         if n_components is not None:
-            feat = feat - feat.min()
-            feat.div_(feat.sum(dim=-1, keepdim=True).clamp_(min=1.))
+            EPS = 1E-8
+
+            def standardize(x):
+                return (x - x.mean(dim=1, keepdim=True)) / (x.std(dim=1, keepdim=True) + EPS)
+
             pca = PCA(n_components=n_components)
+            feat = standardize(feat)
             feat = torch.from_numpy(pca.fit_transform(feat.numpy()))
         ############################# NOTE: the sole change I implemented #############################
 
