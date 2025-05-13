@@ -65,6 +65,9 @@ _dataset_lookup:
   ProdXAll:
     train: [ Product ]
     eval: ${_all_datasets}
+  Multi:
+    train: [Roman, Cora, Chameleon, Cornell, AirBrazil]
+    eval: [AmzRatings, Minesweeper, Tolokers, Questions, Citeseer, Pubmed, Squirrel, Wisconsin, Texas, AirUS, AirEU]
 
   # Train on Arxiv, inference on Cora and Citeseer
   CoraCiteInference:
