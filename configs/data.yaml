@@ -14,17 +14,17 @@ _trans_datasets: [ Arxiv, Product, Cora, Wisconsin ] # Used when identifying hel
 
 _all_datasets: [
   Arxiv,
-  Cora,
+#  Cora,
   FCora,
   Citeseer,
-  DBLP,
+#  DBLP,
   Pubmed,
   Wiki,
   WkCS,
   Reddit,
 
   Product,
-  AmzComp,
+#  AmzComp,
   AmzPhoto,
   BlogCatalog,
   LastFMAsia,
@@ -33,20 +33,29 @@ _all_datasets: [
   CoCS,
   CoPhysics,
   Cornell,
-  Texas,
+#  Texas,
   Wisconsin,
   AirBrazil,
   AirUS,
-  AirEU,
+#  AirEU,
 
   Chameleon,
   Actor,
-  Squirrel,
-  Roman,
+#  Squirrel,
+#  Roman,
   AmzRatings,
   Minesweeper,
   Tolokers,
   Questions,
+]
+
+_part_datasets: [Citeseer, Pubmed,
+                 AmzRatings, Minesweeper, Tolokers, Questions,
+                 Chameleon,
+                 Wisconsin, Cornell,
+                 AirUS, AirBrazil,
+                 AmzPhoto,
+                 FCora,
 ]
 
 _dataset_lookup:
@@ -65,9 +74,27 @@ _dataset_lookup:
   ProdXAll:
     train: [ Product ]
     eval: ${_all_datasets}
-  Multi:
-    train: [Roman, Cora, Chameleon, Cornell, AirBrazil]
-    eval: [AmzRatings, Minesweeper, Tolokers, Questions, Citeseer, Pubmed, Squirrel, Wisconsin, Texas, AirUS, AirEU]
+  Multi3:
+    train: [Cora, Roman, Squirrel]
+    eval: ${_all_datasets}
+  Multi5:
+    train: [Cora, Roman, Squirrel, Texas, AirEU]
+    eval: ${_all_datasets}
+  Multi7:
+    train: [Cora, Roman, Squirrel, Texas, AirEU, AmzComp, DBLP]
+    eval: ${_all_datasets}
+  CoraPart:
+    train: [ Cora ]
+    eval: ${_part_datasets}
+  Multi3Part:
+    train: [Cora, Roman, Squirrel]
+    eval: ${_part_datasets}
+  Multi5Part:
+    train: [Cora, Roman, Squirrel, Texas, AirEU]
+    eval: ${_part_datasets}
+  Multi7Part:
+    train: [Cora, Roman, Squirrel, Texas, AirEU, AmzComp, DBLP]
+    eval: ${_part_datasets}
 
   # Train on Arxiv, inference on Cora and Citeseer
   CoraCiteInference:
