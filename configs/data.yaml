@@ -74,6 +74,9 @@ _dataset_lookup:
   ProdXAll:
     train: [ Product ]
     eval: ${_all_datasets}
+  Multi:
+    train: [Cora]
+    eval: ${_all_datasets}
   Multi3:
     train: [Cora, Roman, Squirrel]
     eval: ${_all_datasets}
