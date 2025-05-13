@@ -32,16 +32,16 @@ _all_datasets: [
 
   CoCS,
   CoPhysics,
-  Cornell,
-#  Texas,
+#  Cornell,
+  Texas,
   Wisconsin,
-  AirBrazil,
+#  AirBrazil,
   AirUS,
-#  AirEU,
+  AirEU,
 
-  Chameleon,
+#  Chameleon,
   Actor,
-#  Squirrel,
+  Squirrel,
 #  Roman,
   AmzRatings,
   Minesweeper,
@@ -78,25 +78,25 @@ _dataset_lookup:
     train: [Cora]
     eval: ${_all_datasets}
   Multi3:
-    train: [Cora, Roman, Squirrel]
+    train: [Cora, Roman, Chameleon]
     eval: ${_all_datasets}
   Multi5:
-    train: [Cora, Roman, Squirrel, Texas, AirEU]
+    train: [Cora, Roman, Chameleon, Cornell, AirBrazil]
     eval: ${_all_datasets}
   Multi7:
-    train: [Cora, Roman, Squirrel, Texas, AirEU, AmzComp, DBLP]
+    train: [Cora, Roman, Chameleon, Cornell, AirBrazil, AmzComp, DBLP]
     eval: ${_all_datasets}
   CoraPart:
     train: [ Cora ]
     eval: ${_part_datasets}
   Multi3Part:
-    train: [Cora, Roman, Squirrel]
+    train: [Cora, Roman, Chameleon]
     eval: ${_part_datasets}
   Multi5Part:
-    train: [Cora, Roman, Squirrel, Texas, AirEU]
+    train: [Cora, Roman, Chameleon, Cornell, AirBrazil]
     eval: ${_part_datasets}
   Multi7Part:
-    train: [Cora, Roman, Squirrel, Texas, AirEU, AmzComp, DBLP]
+    train: [Cora, Roman, Chameleon, Cornell, AirBrazil, AmzComp, DBLP]
     eval: ${_part_datasets}
 
   # Train on Arxiv, inference on Cora and Citeseer
