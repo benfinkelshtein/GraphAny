@@ -18,8 +18,8 @@ run = neptune.init_run(project=args.project, api_token=API_TOKEN)
 run["mode"] = args.mode
 
 # Base command
-base_command = f"python graphany/run.py dataset={args.mode} total_steps=1000 " \
-               "n_hidden=32 n_mlp_layer=2 entropy=1 n_per_label_examples=5"
+base_command = f"python graphany/run.py dataset={args.mode} " \
+               "total_steps=500 n_hidden=64 n_mlp_layer=1 entropy=2 n_per_label_examples=5"
 
 # Regex pattern
 pattern = re.compile(r"ind/([\w]+)_test_acc\s*│\s*([\d.]+)")

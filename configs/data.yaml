@@ -33,29 +33,20 @@ _all_datasets: [
   CoCS,
   CoPhysics,
   Cornell,
-#  Texas,
+  Texas,
   Wisconsin,
-  AirBrazil,
-  AirUS,
+#  AirBrazil,
+#  AirUS,
 #  AirEU,
 
   Chameleon,
   Actor,
-#  Squirrel,
-#  Roman,
+  Squirrel,
+  Roman,
   AmzRatings,
-  Minesweeper,
-  Tolokers,
+#  Minesweeper,
+#  Tolokers,
   Questions,
-]
-
-_part_datasets: [Citeseer, Pubmed,
-                 AmzRatings, Minesweeper, Tolokers, Questions,
-                 Chameleon,
-                 Wisconsin, Cornell,
-                 AirUS, AirBrazil,
-                 AmzPhoto,
-                 FCora,
 ]
 
 _dataset_lookup:
@@ -74,30 +65,50 @@ _dataset_lookup:
   ProdXAll:
     train: [ Product ]
     eval: ${_all_datasets}
-  Multi:
+
+  Test_Size1:
     train: [Cora]
     eval: ${_all_datasets}
-  Multi3:
-    train: [Cora, Roman, Squirrel]
+
+  Test1_Size3:
+    train: [ Cora, AirEU, Tolokers ]
     eval: ${_all_datasets}
-  Multi5:
-    train: [Cora, Roman, Squirrel, Texas, AirEU]
+  Test2_Size3:
+    train: [ Cora, AirUS, Tolokers ]
     eval: ${_all_datasets}
-  Multi7:
-    train: [Cora, Roman, Squirrel, Texas, AirEU, AmzComp, DBLP]
+  Test3_Size3:
+    train: [ Cora, AirBrazil, Tolokers ]
     eval: ${_all_datasets}
-  CoraPart:
-    train: [ Cora ]
-    eval: ${_part_datasets}
-  Multi3Part:
-    train: [Cora, Roman, Squirrel]
-    eval: ${_part_datasets}
-  Multi5Part:
-    train: [Cora, Roman, Squirrel, Texas, AirEU]
-    eval: ${_part_datasets}
-  Multi7Part:
-    train: [Cora, Roman, Squirrel, Texas, AirEU, AmzComp, DBLP]
-    eval: ${_part_datasets}
+
+  Test4_Size3:
+    train: [ Cora, AirEU, Minesweeper ]
+    eval: ${_all_datasets}
+  Test5_Size3:
+    train: [ Cora, AirUS, Minesweeper ]
+    eval: ${_all_datasets}
+  Test6_Size3:
+    train: [ Cora, AirBrazil, Minesweeper ]
+    eval: ${_all_datasets}
+
+  Test7_Size3:
+    train: [ Cora, AirEU, BDLP ]
+    eval: ${_all_datasets}
+  Test8_Size3:
+    train: [ Cora, AirUS, BDLP ]
+    eval: ${_all_datasets}
+  Test9_Size3:
+    train: [ Cora, AirBrazil, BDLP ]
+    eval: ${_all_datasets}
+
+  Test10_Size3:
+    train: [ Cora, AirEU, AmzComp ]
+    eval: ${_all_datasets}
+  Test11_Size3:
+    train: [ Cora, AirUS, AmzComp ]
+    eval: ${_all_datasets}
+  Test12_Size3:
+    train: [ Cora, AirBrazil, AmzComp ]
+    eval: ${_all_datasets}
 
   # Train on Arxiv, inference on Cora and Citeseer
   CoraCiteInference:
