@@ -1,19 +1,24 @@
 import subprocess
 import re
 import neptune
-import os
 import numpy as np
 from collections import defaultdict
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+parser.add_argument("--project", dest="project", type=str, required=True)
+parser.add_argument("--mode", dest="mode", type=str, required=True)
+args = parser.parse_args()
 
 # Initialize Neptune
-API_TOKEN = "..."  # keep this secure
-run = neptune.init_run(project="GraphAny", api_token=API_TOKEN)
+API_TOKEN = "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI3ZTZjOWE3Yi0xOGU3LTQwOTEtYWIzNS1hYzRmOGZiMjhhNTcifQ=="
+run = neptune.init_run(project=args.project, api_token=API_TOKEN)
 
 # Set Neptune tag
-run["setup"] = "Multi"
+run["mode"] = args.mode
 
 # Base command
-base_command = "python graphany/run.py dataset=Multi total_steps=1000 " \
+base_command = f"python graphany/run.py dataset={args.mode} total_steps=1000 " \
                "n_hidden=32 n_mlp_layer=2 entropy=1 n_per_label_examples=5"
 
 # Regex pattern
