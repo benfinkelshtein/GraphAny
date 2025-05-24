@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Number of sbatch scripts you want
-num_sbatch_scripts=10
+num_sbatch_scripts=1
 
 for i in $(seq 1 1 $num_sbatch_scripts)
 do
@@ -20,7 +20,7 @@ conda activate graphany
 # Run the main.py script with the parameter set for this sbatch script
 while IFS= read -r line
 do
-  python -u /home/benfin/GraphAny/run_and_record.py.py \$line
+  python -u /home/benfin/GraphAny/run_and_record.py \$line
 done < /home/benfin/GraphAny/scripts_euler/grid/batch_${i}.txt
 EOF
 done
