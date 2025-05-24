@@ -28,7 +28,7 @@ batches = [commands[i:i + batch_size] for i in range(0, len(commands), batch_siz
 print(f'batches: {len(batches)}')
 
 # Write each batch to a separate file
-command_folder = os.path.join(ROOT_DIR, 'scripts_eule', 'grid')
+command_folder = os.path.join(ROOT_DIR, 'scripts_euler', 'grid')
 if os.path.exists(command_folder):
     shutil.rmtree(command_folder)
 os.mkdir(command_folder)
