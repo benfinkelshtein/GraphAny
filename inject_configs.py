@@ -5,7 +5,6 @@ from itertools import combinations
 path = "configs/data.yaml"
 
 # === Configuration ===
-N_CONFIGS = 200  # number of configurations to generate
 
 all_datasets = ['Arxiv', 'Cora', 'FCora', 'Citeseer', 'DBLP', 'Pubmed', 'Wiki', 'WkCS', 'Reddit', 'Product',
                 'AmzComp', 'AmzPhoto', 'BlogCatalog', 'LastFMAsia', 'Deezer', 'CoCS', 'CoPhysics', 'Cornell',
@@ -34,10 +33,10 @@ sampled_combos = all_combinations #random.sample(all_combinations, N_CONFIGS)
 
 # Add configurations
 for i, combo in enumerate(sampled_combos):
-    name_aux = f"{i}_Aux"
-    name_cora = f"{i}_Cora"
+    name_aux = f"{i:04d}_Aux"
+    name_cora = f"{i:04d}_Cora"
     train_with_aux = ["Cora"] + list(combo)
-    eval_set = [d for d in all_datasets if d not in combo]
+    eval_set = [d for d in all_datasets if d not in train_with_aux]
 
     config_data["_dataset_lookup"][name_aux] = {
         "train": train_with_aux,
@@ -52,4 +51,4 @@ for i, combo in enumerate(sampled_combos):
 with open(path, "w") as f:
     yaml.dump(config_data, f)
 
-print(f"✅ Injected {N_CONFIGS} configuration pairs into {path}")
+print(f"✅ Injected the configuration pairs into {path}")

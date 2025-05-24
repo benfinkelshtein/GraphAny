@@ -20,7 +20,7 @@ num_combinations = len(list(combinations(candidate_datasets, 8)))
 commands = []
 command = []
 for idx in range(num_combinations):
-    commands.append(f'--project {project} --mode {idx}')
+    commands.append(f'--project {project} --mode {idx:04d}')
 
 # Divide the commands into equal-sized batches
 batch_size = math.ceil(len(commands) / 10)  # dict_batch_size[dataset]
