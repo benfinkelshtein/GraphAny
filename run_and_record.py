@@ -31,7 +31,12 @@ results_by_dataset = defaultdict(list)
 for idx in range(5):
     cmd = base_command + f" seed={idx}"
     print(f"Running: {cmd}")
-    result = subprocess.run(cmd, shell=True, text=True, capture_output=True, check=True)
+    try:
+        result = subprocess.run(cmd, shell=True, text=True, capture_output=True, check=True)
+        print("Success:", result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error output:\n", e.stderr)
+        print("Standard output before error:\n", e.stdout)
     output = result.stdout
 
     for match in pattern.finditer(output):

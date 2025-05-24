@@ -91,9 +91,6 @@ _dataset_lookup:
   Test8_Size5:
     train: [ Cora, AirEU, Tolokers, AmzComp, Deezer]
     eval: ${_all_datasets}
-  Test8_Size5:
-    train: [ Cora, AirUS, Tolokers, AmzComp, Deezer]
-    eval: ${_all_datasets}
 
   Test9_Size5:
     train: [ Cora, AirEU, Tolokers, AmzComp, Squirrel]
