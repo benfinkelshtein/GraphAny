@@ -27,7 +27,7 @@ for source_counter, candidate_datasets in candidates.items():
     all_combos = list(combinations(candidate_datasets, size))
     for _ in all_combos:
         commands.append(
-            f'--project {project} --source {source_counter:04d} --mode {combo_counter:04d}'
+            f'--project {project} --source {source_counter} --mode {combo_counter:04d}'
         )
         combo_counter += 1
 
