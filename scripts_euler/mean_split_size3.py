@@ -26,7 +26,7 @@ commands = []
 combo_counter = 0
 
 # Optional size flag (if you intend to use it)
-size = 4  # Default to 6 as used in combinations
+size = 2  # Default to 6 as used in combinations
 
 # === Generate --mode <idx> command for each combination ===
 
