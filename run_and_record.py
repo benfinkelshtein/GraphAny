@@ -11,6 +11,7 @@ parser.add_argument("--project", dest="project", type=str, required=True)
 parser.add_argument("--mode", dest="mode", type=str, required=True)
 parser.add_argument("--source9", dest="source9", type=str, required=False)
 parser.add_argument("--source7", dest="source7", type=str, required=False)
+parser.add_argument("--source5", dest="source5", type=str, required=False)
 args = parser.parse_args()
 
 # --- Neptune setup ---
@@ -19,6 +20,7 @@ run = neptune.init_run(project=args.project, api_token=API_TOKEN)
 run["mode"] = args.mode
 run["source9"] = args.source9
 run["source7"] = args.source7
+run["source5"] = args.source5
 
 # --- Commands ---
 commands = {
