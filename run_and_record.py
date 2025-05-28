@@ -9,14 +9,16 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument("--project", dest="project", type=str, required=True)
 parser.add_argument("--mode", dest="mode", type=str, required=True)
-parser.add_argument("--source_counter", dest="source_counter", type=str, required=False)
+parser.add_argument("--source9", dest="source9", type=str, required=False)
+parser.add_argument("--source7", dest="source7", type=str, required=False)
 args = parser.parse_args()
 
 # --- Neptune setup ---
 API_TOKEN = "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI3ZTZjOWE3Yi0xOGU3LTQwOTEtYWIzNS1hYzRmOGZiMjhhNTcifQ=="
 run = neptune.init_run(project=args.project, api_token=API_TOKEN)
 run["mode"] = args.mode
-run["source_counter"] = args.source_counter
+run["source9"] = args.source9
+run["source7"] = args.source7
 
 # --- Commands ---
 commands = {
