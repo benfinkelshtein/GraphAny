@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 # --- CLI args ---
 parser = ArgumentParser()
 parser.add_argument("--project", dest="project", type=str, required=True)
-parser.add_argument("--mode", dest="mode", type=str, required=True)
+parser.add_argument("--mode", dest="mode", type=int, required=True)
 parser.add_argument("--size", dest="size", type=int, required=True)
 args = parser.parse_args()
 
