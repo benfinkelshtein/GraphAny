@@ -57,59 +57,54 @@ exclude_cora = {"cora"}
 custom_exclude = {'cora', 'texa', 'tolo', 'roma', 'amzp', 'airu', 'acto', 'amzc', 'aire'}  # Add any datasets to exclude here
 
 # Store per dataset stats
-test_means = {}
-test_stds = {}
+for split in ['val', 'test']:
+    means = {}
+    stds = {}
 
-# Log dataset-level stats to Neptune
-for dataset, splits in results.items():
-    test_accs = splits.get("test", [])
-    if not test_accs:
-        continue
+    # Log dataset-level stats to Neptune
+    for dataset, splits in results.items():
+        accs = splits.get(split, [])
+        if not accs:
+            continue
 
-    mean_test = np.mean(test_accs)
-    std_test = np.std(test_accs)
+        mean = np.mean(accs)
+        std = np.std(accs)
 
-    test_means[dataset] = mean_test
-    test_stds[dataset] = std_test
+        means[dataset] = mean
+        stds[dataset] = std
 
-    run[f"results/{dataset}/test_metric_mean"] = mean_test
-    run[f"results/{dataset}/test_metric_std"] = std_test
+        run[f"results/{dataset}/{split}_metric_mean"] = mean
+        run[f"results/{dataset}/{split}_metric_std"] = std
 
-    mean_val = np.mean(splits["val"])
-    std_val = np.std(splits["val"])
-    run[f"results/{dataset}/val_metric_mean"] = mean_val
-    run[f"results/{dataset}/val_metric_std"] = std_val
+    # --- Filtered group-level metrics ---
+    def compute_group_stats(exclude_set):
+        filtered_means = [mean for ds, mean in means.items() if ds not in exclude_set]
+        filtered_stds = [std for ds, std in stds.items() if ds not in exclude_set]
 
-# --- Filtered group-level metrics ---
+        if filtered_means:
+            mean_group = np.mean(filtered_means)
+            std_group = np.mean(filtered_stds)
+        else:
+            mean_group = 0.0
+            std_group = 0.0
 
-def compute_group_stats(exclude_set):
-    filtered_means = [mean for ds, mean in test_means.items() if ds not in exclude_set]
-    filtered_stds = [std for ds, std in test_stds.items() if ds not in exclude_set]
+        return mean_group, std_group
 
-    if filtered_means:
-        mean_group = np.mean(filtered_means)
-        std_group = np.mean(filtered_stds)
-    else:
-        mean_group = 0.0
-        std_group = 0.0
+    # (1) All datasets except cora
+    mean_excl_cora, std_excl_cora = compute_group_stats(exclude_cora)
+    run[f"results/{split}_metric_mean"] = mean_excl_cora
+    run[f"results/{split}_metric_std"] = std_excl_cora
 
-    return mean_group, std_group
+    # (2) All datasets except for those in custom exclusion list
+    mean_excl_custom, std_excl_custom = compute_group_stats(custom_exclude)
+    run[f"results/{split}_metric_mean20"] = mean_excl_custom
+    run[f"results/{split}_metric_std20"] = std_excl_custom
 
-# (1) All datasets except cora
-mean_excl_cora, std_excl_cora = compute_group_stats(exclude_cora)
-run["results/test_metric_mean"] = mean_excl_cora
-run["results/test_metric_std"] = std_excl_cora
-
-# (2) All datasets except for those in custom exclusion list
-mean_excl_custom, std_excl_custom = compute_group_stats(custom_exclude)
-run["results/test_metric_mean20"] = mean_excl_custom
-run["results/test_metric_std20"] = std_excl_custom
-
-# --- Print summary ---
-print("\n📊 Summary:")
-print(f"Mean (excluding cora):        {mean_excl_cora:.4f}")
-print(f"Std  (mean of stds):          {std_excl_cora:.4f}")
-print(f"Mean (excluding {custom_exclude}): {mean_excl_custom:.4f}")
-print(f"Std  (mean of stds):          {std_excl_custom:.4f}")
+    # --- Print summary ---
+    print(f"\n📊 Summary {split}:")
+    print(f"Mean (excluding cora):        {mean_excl_cora:.4f}")
+    print(f"Std  (mean of stds):          {std_excl_cora:.4f}")
+    print(f"Mean (excluding {custom_exclude}): {mean_excl_custom:.4f}")
+    print(f"Std  (mean of stds):          {std_excl_custom:.4f}")
 
 run.stop()
