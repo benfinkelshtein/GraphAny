@@ -91,9 +91,10 @@ for split in ['val', 'test']:
         return mean_group, std_group
 
     # (1) All datasets except cora
-    mean_excl_cora, std_excl_cora = compute_group_stats(exclude_cora)
-    run[f"results/{split}_metric_mean"] = mean_excl_cora
-    run[f"results/{split}_metric_std"] = std_excl_cora
+    if args.dataset == 'size1':
+        mean_excl_cora, std_excl_cora = compute_group_stats(exclude_cora)
+        run[f"results/{split}_metric_mean"] = mean_excl_cora
+        run[f"results/{split}_metric_std"] = std_excl_cora
 
     # (2) All datasets except for those in custom exclusion list
     mean_excl_custom, std_excl_custom = compute_group_stats(custom_exclude)
@@ -102,9 +103,10 @@ for split in ['val', 'test']:
 
     # --- Print summary ---
     print(f"\n📊 Summary {split}:")
-    print(f"Mean (excluding cora):        {mean_excl_cora:.4f}")
-    print(f"Std  (mean of stds):          {std_excl_cora:.4f}")
-    print(f"Mean (excluding {custom_exclude}): {mean_excl_custom:.4f}")
-    print(f"Std  (mean of stds):          {std_excl_custom:.4f}")
+    if args.dataset == 'size1':
+        print(f"Mean (excluding cora):        {mean_excl_cora:.4f}")
+        print(f"Std  (mean of stds):          {std_excl_cora:.4f}")
+    print(f"Mean20 ): {mean_excl_custom:.4f}")
+    print(f"Std20  (mean of stds):          {std_excl_custom:.4f}")
 
 run.stop()

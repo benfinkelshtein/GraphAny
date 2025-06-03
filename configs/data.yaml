@@ -14,16 +14,16 @@ _trans_datasets: [ Arxiv, Product, Cora, Wisconsin ] # Used when identifying hel
 
 _all_datasets: [
   Arxiv,
-  Cora,
+#  Cora,
   FCora,
   Citeseer,
   DBLP,
   Pubmed,
   Wiki,
   WkCS,
-  Reddit,
+#  Reddit,
 
-  Product,
+#  Product,
   AmzComp,
   AmzPhoto,
   BlogCatalog,
@@ -105,7 +105,7 @@ _dataset_lookup:
 
   size1:
     train: [ Cora ]
-    eval: ${_all_20datasets}
+    eval: ${_all_datasets}
   size3:
     train: [ Cora, Texas, Tolokers]
     eval: ${_all_20datasets}
