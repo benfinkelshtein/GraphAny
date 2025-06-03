@@ -7,106 +7,118 @@ from argparse import ArgumentParser
 
 # --- CLI args ---
 parser = ArgumentParser()
-parser.add_argument("--project", dest="project", type=str, required=True)
-parser.add_argument("--mode", dest="mode", type=str, required=True)
-parser.add_argument("--source9", dest="source9", type=str, required=False)
-parser.add_argument("--source7", dest="source7", type=str, required=False)
-parser.add_argument("--source5", dest="source5", type=str, required=False)
+parser.add_argument("--project", type=str, required=True)
+parser.add_argument("--command", type=str, required=True)
 args = parser.parse_args()
 
 # --- Neptune setup ---
 API_TOKEN = "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI3ZTZjOWE3Yi0xOGU3LTQwOTEtYWIzNS1hYzRmOGZiMjhhNTcifQ=="
 run = neptune.init_run(project=args.project, api_token=API_TOKEN)
-run["mode"] = args.mode
-run["source9"] = args.source9
-run["source7"] = args.source7
-run["source5"] = args.source5
+run["parameters/command"] = args.command
 
-# --- Commands ---
-commands = {
-    "Aux": f"python graphany/run.py dataset={args.mode}_Aux total_steps=500 n_hidden=64 n_mlp_layer=1 entropy=2 n_per_label_examples=5",
-    "Cora": f"python graphany/run.py dataset={args.mode}_Cora total_steps=500 n_hidden=64 n_mlp_layer=1 entropy=2 n_per_label_examples=5"
-}
 
-# --- Regex to extract test accuracy
-pattern = re.compile(r"ind/([\w]+)_test_acc\s*│\s*([\d.]+)")
+# --- Parse key=value pairs from the command string ---
+def extract_key_values(command_str):
+    param_dict = {}
+    for part in command_str.split():
+        if "=" in part:
+            key, val = part.split("=")
+            try:
+                val = int(val)
+            except ValueError:
+                try:
+                    val = float(val)
+                except ValueError:
+                    pass  # leave as string
+            param_dict[key] = val
+    return param_dict
 
-# --- Store results
-results = {
-    "Aux": defaultdict(list),
-    "Cora": defaultdict(list)
-}
-aggregated = {
-    "Aux": {},
-    "Cora": {},
-    "Delta": {}
-}
+# --- Record parameters to Neptune ---
+params = extract_key_values(args.command)
+for key, val in params.items():
+    run[f"parameters/{key}"] = val
 
-# --- Run seeds for both commands ---
-for label, cmd in commands.items():
-    for seed in range(5):
-        print(f"Running {label} | seed {seed}")
-        full_cmd = f"{cmd} seed={seed}"
-        try:
-            result = subprocess.run(full_cmd, shell=True, text=True, capture_output=True, check=True)
-            output = result.stdout
-        except subprocess.CalledProcessError as e:
-            print("Error:\n", e.stderr)
-            output = e.stdout
+# --- Updated Regex: capture both val and test accuracies ---
+pattern = re.compile(r"ind/([\w]+)_(val|test)_acc\s*│\s*([\d.]+)")
 
-        for match in pattern.finditer(output):
-            dataset, acc = match.groups()
-            results[label][dataset].append(float(acc))
+# Store as: results[dataset][split] = list of accs
+results = defaultdict(lambda: defaultdict(list))
 
-# --- Aggregate statistics and log to Neptune ---
-all_means_aux = []
-all_stds_aux = []
-all_means_cora = []
-all_stds_cora = []
+# --- Run command with 5 seeds ---
+for seed in range(5):
+    print(f"🚀 Running seed {seed}")
+    full_cmd = f"python graphany/run.py {args.command} seed={seed}"
+    try:
+        result = subprocess.run(full_cmd, shell=True, text=True, capture_output=True, check=True)
+        output = result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error in seed {seed}:\n", e.stderr)
+        output = e.stdout
 
-for dataset in sorted(set(results["Aux"]) | set(results["Cora"])):
-    accs_aux = results["Aux"].get(dataset, [])
-    accs_cora = results["Cora"].get(dataset, [])
+    for match in pattern.finditer(output):
+        dataset, split, acc = match.groups()
+        acc = float(acc)
+        results[dataset][split].append(acc)
+        print(f"📈 {dataset} | {split}_acc | seed {seed}: {acc:.4f}")
 
-    mean_aux = np.mean(accs_aux) if accs_aux else 0.0
-    std_aux = np.std(accs_aux) if accs_aux else 0.0
-    mean_cora = np.mean(accs_cora) if accs_cora else 0.0
-    std_cora = np.std(accs_cora) if accs_cora else 0.0
-    delta = mean_aux - mean_cora
+# --- Custom exceptions ---
+exclude_cora = {"cora"}
+custom_exclude = {'cora', 'texa', 'tolo', 'roma', 'amzp', 'airu', 'acto', 'amzc', 'aire'}  # Add any datasets to exclude here
 
-    aggregated["Aux"][dataset] = {"mean": mean_aux, "std": std_aux}
-    aggregated["Cora"][dataset] = {"mean": mean_cora, "std": std_cora}
-    aggregated["Delta"][dataset] = delta
+# Store per dataset stats
+test_means = {}
+test_stds = {}
 
-    run[f"results/{dataset}/Aux_mean"] = mean_aux
-    run[f"results/{dataset}/Aux_std"] = std_aux
-    run[f"results/{dataset}/Cora_mean"] = mean_cora
-    run[f"results/{dataset}/Cora_std"] = std_cora
-    run[f"results/{dataset}/delta"] = delta
+# Log dataset-level stats to Neptune
+for dataset, splits in results.items():
+    test_accs = splits.get("test", [])
+    if not test_accs:
+        continue
 
-    all_means_aux.append(mean_aux)
-    all_stds_aux.append(std_aux)
-    all_means_cora.append(mean_cora)
-    all_stds_cora.append(std_cora)
+    mean_test = np.mean(test_accs)
+    std_test = np.std(test_accs)
 
-# --- Overall metrics ---
-global_mean_aux = np.mean(all_means_aux)
-global_std_aux = np.mean(all_stds_aux)
-global_mean_cora = np.mean(all_means_cora)
-global_std_cora = np.mean(all_stds_cora)
-global_delta = global_mean_aux - global_mean_cora
+    test_means[dataset] = mean_test
+    test_stds[dataset] = std_test
 
-run["results/global/Aux_mean"] = global_mean_aux
-run["results/global/Aux_std"] = global_std_aux
-run["results/global/Cora_mean"] = global_mean_cora
-run["results/global/Cora_std"] = global_std_cora
-run["results/global/delta"] = global_delta
+    run[f"results/{dataset}/test_metric_mean"] = mean_test
+    run[f"results/{dataset}/test_metric_std"] = std_test
 
+    mean_val = np.mean(splits["val"])
+    std_val = np.std(splits["val"])
+    run[f"results/{dataset}/val_metric_mean"] = mean_val
+    run[f"results/{dataset}/val_metric_std"] = std_val
+
+# --- Filtered group-level metrics ---
+
+def compute_group_stats(exclude_set):
+    filtered_means = [mean for ds, mean in test_means.items() if ds not in exclude_set]
+    filtered_stds = [std for ds, std in test_stds.items() if ds not in exclude_set]
+
+    if filtered_means:
+        mean_group = np.mean(filtered_means)
+        std_group = np.mean(filtered_stds)
+    else:
+        mean_group = 0.0
+        std_group = 0.0
+
+    return mean_group, std_group
+
+# (1) All datasets except cora
+mean_excl_cora, std_excl_cora = compute_group_stats(exclude_cora)
+run["results/test_metric_mean"] = mean_excl_cora
+run["results/test_metric_std"] = std_excl_cora
+
+# (2) All datasets except for those in custom exclusion list
+mean_excl_custom, std_excl_custom = compute_group_stats(custom_exclude)
+run["results/test_metric_mean20"] = mean_excl_custom
+run["results/test_metric_std20"] = std_excl_custom
+
+# --- Print summary ---
 print("\n📊 Summary:")
-print(f"Aux overall mean:  {global_mean_aux:.4f}")
-print(f"Aux overall std:  {global_std_aux:.4f}")
-print(f"Cora overall mean: {global_mean_cora:.4f}")
-print(f"Aux overall std:  {global_std_cora:.4f}")
-print(f"Delta (Aux - Cora): {global_delta:.4f}")
+print(f"Mean (excluding cora):        {mean_excl_cora:.4f}")
+print(f"Std  (mean of stds):          {std_excl_cora:.4f}")
+print(f"Mean (excluding {custom_exclude}): {mean_excl_custom:.4f}")
+print(f"Std  (mean of stds):          {std_excl_custom:.4f}")
 
 run.stop()

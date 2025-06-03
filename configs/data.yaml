@@ -14,25 +14,62 @@ _trans_datasets: [ Arxiv, Product, Cora, Wisconsin ] # Used when identifying hel
 
 _all_datasets: [
   Arxiv,
-#  Cora,
+  Cora,
   FCora,
   Citeseer,
-#  DBLP,
+  DBLP,
   Pubmed,
   Wiki,
   WkCS,
   Reddit,
 
   Product,
-#  AmzComp,
+  AmzComp,
   AmzPhoto,
   BlogCatalog,
   LastFMAsia,
-#  Deezer,
+  Deezer,
 
   CoCS,
   CoPhysics,
-#  Cornell,
+  Cornell,
+  Texas,
+  Wisconsin,
+  AirBrazil,
+  AirUS,
+  AirEU,
+
+  Chameleon,
+  Actor,
+  Squirrel,
+  Roman,
+  AmzRatings,
+  Minesweeper,
+  Tolokers,
+  Questions,
+]
+
+_all_20datasets: [
+  Arxiv,
+#  Cora,
+  FCora,
+  Citeseer,
+  DBLP,
+  Pubmed,
+  Wiki,
+  WkCS,
+#  Reddit,
+
+#  Product,
+#  AmzComp,
+#  AmzPhoto,
+  BlogCatalog,
+  LastFMAsia,
+  Deezer,
+
+  CoCS,
+  CoPhysics,
+  Cornell,
 #  Texas,
   Wisconsin,
   AirBrazil,
@@ -41,8 +78,8 @@ _all_datasets: [
 
   Chameleon,
 #  Actor,
-#  Squirrel,
-  Roman,
+  Squirrel,
+#  Roman,
   AmzRatings,
   Minesweeper,
 #  Tolokers,
@@ -66,12 +103,22 @@ _dataset_lookup:
     train: [ Product ]
     eval: ${_all_datasets}
 
-  Test_Size1:
-    train: [Cora]
-    eval: ${_all_datasets}
-  Test1_Size5:
-    train: [ Cora, AirEU, Tolokers, AmzComp, DBLP]
-    eval: ${_all_datasets}
+  size1:
+    train: [ Cora ]
+    eval: ${_all_20datasets}
+  size3:
+    train: [ Cora, Texas, Tolokers]
+    eval: ${_all_20datasets}
+  size5:
+    train: [ Cora, Texas, Tolokers, Roman, AmzPhoto ]
+    eval: ${_all_20datasets}
+  size7:
+    train: [ Cora, Texas, Tolokers, Roman, AmzPhoto, AirUS, Actor ]
+    eval: ${_all_20datasets}
+  size9:
+    train: [ Cora, Texas, Tolokers, Roman, AmzPhoto, AirUS, Actor, AmzComp, AirEU ]
+    eval: ${_all_20datasets}
+
 
   # Train on Arxiv, inference on Cora and Citeseer
   CoraCiteInference:

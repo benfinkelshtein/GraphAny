@@ -1,38 +1,51 @@
+import itertools
 import os
 import shutil
 import math
-from itertools import combinations
+import re
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-## Grid arguments
-candidate_datasets = [
-    "Citeseer", "AmzComp", "LastFMAsia", "AmzPhoto", "Deezer",
-    "Texas", "AirUS", "AirEU", "Chameleon", "Actor", "Squirrel",
-    "Roman", "Tolokers",
-    # "Minesweeper", "Questions", "AirBrazil", "Wisconsin", "Cornell", "DBLP",
-    # "Pubmed", "AmzRatings", -- consider
+# The new expected hps to be passed as key=value (Hydra-style)
+arg_names = [
+    'project', 'dataset', 'total_steps', 'n_hidden', 'n_mlp_layer', 'entropy', 'n_per_label_examples'
 ]
-project = 'GFM/GraphAny4'
-num_combinations = len(list(combinations(candidate_datasets, 8)))
+
+# You can tune these based on your needs
+def get_grid(dataset_name: str):
+    grid = [
+        ['GFM/Multi-GraphAny'],
+        [dataset_name],        # dataset
+        [500, 1000, 1500],                # total_steps
+        [32, 64, 128],            # n_hidden
+        [1, 2, 3],                # n_mlp_layer
+        [1, 2],            # entropy
+        [5],                # n_per_label_examples
+    ]
+    return grid
 
 
 commands = []
-command = []
-for idx in range(num_combinations):
-    commands.append(f'--project {project} --mode {idx:04d}')
+for dataset in ["size1", "size3", "size5", "size7", "size9", ]:
+    for args in itertools.product(*get_grid(dataset)):
+        cmd = ["--command "]
+        cmd += [f"{key}={value}" for key, value in zip(arg_names, args)]
+        commands.append(' '.join(cmd))
 
-# Divide the commands into equal-sized batches
-batch_size = math.ceil(len(commands) / 10)  # dict_batch_size[dataset]
+print(f"Total commands generated: {len(commands)}")
+
+# Split into batches
+batch_size = math.ceil(len(commands) / 12)
 batches = [commands[i:i + batch_size] for i in range(0, len(commands), batch_size)]
-print(f'batches: {len(batches)}')
+print(f"Batches: {len(batches)}")
 
-# Write each batch to a separate file
+# Create output folder
 command_folder = os.path.join(ROOT_DIR, 'scripts_euler', 'grid')
 if os.path.exists(command_folder):
     shutil.rmtree(command_folder)
-os.mkdir(command_folder)
+os.makedirs(command_folder)
 
+# Write batches to files
 for i, batch in enumerate(batches, start=1):
     with open(os.path.join(command_folder, f'batch_{i}.txt'), 'w') as f:
         for command in batch:
