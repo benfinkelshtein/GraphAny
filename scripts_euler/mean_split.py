@@ -8,13 +8,12 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # The new expected hps to be passed as key=value (Hydra-style)
 arg_names = [
-    'project', 'dataset', 'total_steps', 'n_hidden', 'n_mlp_layer', 'entropy', 'n_per_label_examples'
+    'dataset', 'total_steps', 'n_hidden', 'n_mlp_layer', 'entropy', 'n_per_label_examples'
 ]
 
 # You can tune these based on your needs
 def get_grid(dataset_name: str):
     grid = [
-        ['GFM/Multi-GraphAny'],
         [dataset_name],        # dataset
         [500, 1000, 1500],                # total_steps
         [32, 64, 128],            # n_hidden
@@ -28,7 +27,7 @@ def get_grid(dataset_name: str):
 commands = []
 for dataset in ["size1", "size3", "size5", "size7", "size9", ]:
     for args in itertools.product(*get_grid(dataset)):
-        cmd = ["--command "]
+        cmd = ["--project GFM/Multi-GraphAny --command "]
         cmd += [f"{key}={value}" for key, value in zip(arg_names, args)]
         commands.append(' '.join(cmd))
 
