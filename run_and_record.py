@@ -36,7 +36,9 @@ results = defaultdict(lambda: defaultdict(list))
 # --- Run command with 5 seeds ---
 for seed in range(5):
     print(f"🚀 Running seed {seed}")
-    full_cmd = f"python graphany/run.py {args.command} seed={seed}"
+    full_cmd = f"python graphany/run.py dataset={args.dataset} total_steps={args.total_steps} " \
+               f"n_hidden={args.n_hidden} n_mlp_layer={args.n_mlp_layer} entropy={args.entropy} " \
+               f"n_per_label_examples={args.n_per_label_examples} seed={seed}"
     try:
         result = subprocess.run(full_cmd, shell=True, text=True, capture_output=True, check=True)
         output = result.stdout
