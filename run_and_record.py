@@ -8,35 +8,24 @@ from argparse import ArgumentParser
 # --- CLI args ---
 parser = ArgumentParser()
 parser.add_argument("--project", type=str, required=True)
-parser.add_argument("--command", type=str, required=True)
+parser.add_argument("dataset", type=str)
+parser.add_argument("total_steps", type=int)
+parser.add_argument("n_hidden", type=int)
+parser.add_argument("n_mlp_layer", type=int)
+parser.add_argument("entropy", type=float)
+parser.add_argument("n_per_label_examples", type=int)
 args = parser.parse_args()
 
 # --- Neptune setup ---
 API_TOKEN = "eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI3ZTZjOWE3Yi0xOGU3LTQwOTEtYWIzNS1hYzRmOGZiMjhhNTcifQ=="
 run = neptune.init_run(project=args.project, api_token=API_TOKEN)
-run["parameters/command"] = args.command
+run["params/dataset"] = args.dataset
+run["params/total_steps"] = args.total_steps
+run["params/n_hidden"] = args.n_hidden
+run["params/n_mlp_layer"] = args.n_mlp_layer
+run["params/entropy"] = args.entropy
+run["params/n_per_label_examples"] = args.n_per_label_examples
 
-
-# --- Parse key=value pairs from the command string ---
-def extract_key_values(command_str):
-    param_dict = {}
-    for part in command_str.split():
-        if "=" in part:
-            key, val = part.split("=")
-            try:
-                val = int(val)
-            except ValueError:
-                try:
-                    val = float(val)
-                except ValueError:
-                    pass  # leave as string
-            param_dict[key] = val
-    return param_dict
-
-# --- Record parameters to Neptune ---
-params = extract_key_values(args.command)
-for key, val in params.items():
-    run[f"parameters/{key}"] = val
 
 # --- Updated Regex: capture both val and test accuracies ---
 pattern = re.compile(r"ind/([\w]+)_(val|test)_acc\s*│\s*([\d.]+)")
