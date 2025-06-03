@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Number of sbatch scripts you want
-num_sbatch_scripts=12
+num_sbatch_scripts=1
 
 for i in $(seq 1 1 $num_sbatch_scripts)
 do
