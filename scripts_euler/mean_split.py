@@ -28,8 +28,7 @@ commands = []
 for dataset in ["size1", "size3", "size5", "size7", "size9"]:
     for args in itertools.product(*get_grid(dataset)):
         command_str = ' '.join([f"--{key} {value}" for key, value in zip(arg_names, args)])
-        cmd = f"--project GFM/Multi-GraphAny {command_str} "
-        commands.append(cmd)
+        commands.append(command_str)
 
 print(f"Total commands generated: {len(commands)}")
 
