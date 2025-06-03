@@ -15,9 +15,9 @@ arg_names = [
 def get_grid(dataset_name: str):
     grid = [
         [dataset_name],        # dataset
-        [500, 1000, 1500],                # total_steps
+        [500, 1000],                # total_steps
         [32, 64, 128],            # n_hidden
-        [1, 2, 3],                # n_mlp_layer
+        [1, 2],                # n_mlp_layer
         [1, 2],            # entropy
         [5],                # n_per_label_examples
     ]
