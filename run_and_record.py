@@ -7,13 +7,13 @@ from argparse import ArgumentParser
 
 # --- CLI args ---
 parser = ArgumentParser()
-parser.add_argument("--project", type=str, required=True)
-parser.add_argument("dataset", type=str)
-parser.add_argument("total_steps", type=int)
-parser.add_argument("n_hidden", type=int)
-parser.add_argument("n_mlp_layer", type=int)
-parser.add_argument("entropy", type=float)
-parser.add_argument("n_per_label_examples", type=int)
+parser.add_argument("--project", dest='project', type=str, required=True)
+parser.add_argument("--dataset", dest='dataset', type=str)
+parser.add_argument("--total_steps", dest='total_steps', type=int)
+parser.add_argument("--n_hidden", dest='n_hidden', type=int)
+parser.add_argument("--n_mlp_layer", dest='n_mlp_layer', type=int)
+parser.add_argument("--entropy", dest='entropy', type=float)
+parser.add_argument("--n_per_label_examples", dest='n_per_label_examples', type=int)
 args = parser.parse_args()
 
 # --- Neptune setup ---
