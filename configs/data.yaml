@@ -86,6 +86,44 @@ _all_20datasets: [
   Questions,
 ]
 
+
+_all_24datasets: [
+  Arxiv,
+#  Cora,
+  FCora,
+  Citeseer,
+  DBLP,
+  Pubmed,
+  Wiki,
+#  WkCS,
+#  Reddit,
+
+#  Product,
+  AmzComp,
+  AmzPhoto,
+  BlogCatalog,
+  LastFMAsia,
+  Deezer,
+
+  CoCS,
+  CoPhysics,
+  Cornell,
+  Texas,
+#  Wisconsin,
+  AirBrazil,
+  AirUS,
+  AirEU,
+
+#  Chameleon,
+  Actor,
+  Squirrel,
+#  Roman,
+  AmzRatings,
+  Minesweeper,
+  Tolokers,
+  Questions,
+]
+
 _dataset_lookup:
   Debug:
     train: [ Wisconsin ]
@@ -102,6 +140,19 @@ _dataset_lookup:
   ProdXAll:
     train: [ Product ]
     eval: ${_all_datasets}
+
+  Cora1Data:
+    train: [ Cora ]
+    eval: ${_all_24datasets}
+  Roman1Data:
+    train: [ Roman ]
+    eval: ${_all_24datasets}
+  Chameleon1Data:
+    train: [ Chameleon ]
+    eval: ${_all_24datasets}
+  WikiCS1Data:
+    train: [ WkCS ]
+    eval: ${_all_24datasets}
 
   size1:
     train: [ Cora ]
